@@ -11,13 +11,13 @@ import java.awt.image.BufferedImage;
 public class MapBoard extends JFrame
 {
     //Initialize global variables
-    private Map map;
+    private Map map, tempMap;
     private BufferedImage bi;
-    private Graphics g;
+    private Graphics g, temp;
     private JPanel panel, menu;
-
+    private JButton search = new JButton("Find flower");
     private JComboBox tileSelect;
-    
+    private boolean inSearch = false;
     private JMenuBar bar = new JMenuBar();
     private JMenu menuUp = new JMenu("File");
     private JMenuItem saveFile, savePic, loadFile;
@@ -62,11 +62,11 @@ public class MapBoard extends JFrame
 	saveFile = new JMenuItem("Save map");
 	savePic = new JMenuItem("Save as picture");
 	loadFile = new JMenuItem("Load file");
-	
+	search.addActionListener(new MenuSelect());
 	saveFile.addActionListener(new MenuSelect());
 	savePic.addActionListener(new MenuSelect());
 	loadFile.addActionListener(new MenuSelect());
-	
+	menu.add(search);
 	menuUp.add(saveFile);
 	menuUp.add(savePic);
 	menuUp.add(loadFile);
@@ -112,11 +112,19 @@ public class MapBoard extends JFrame
 		map.save ();
 	    }
 	    
-	    else 
+	    else if (e.getSource().equals(loadFile))
 	    {
 		new Map(30,30);
 		map.load("save.txt",g);
 		repaint();
+	    }
+	    else
+	    {
+		tempMap = map;
+		temp = g.create();
+		map.search('f', g);
+		repaint();
+		inSearch =true;
 	    }
 	}
     }
@@ -139,7 +147,7 @@ public class MapBoard extends JFrame
 	{
       
 	    if (e.getX ()/20 > 0 && e.getY ()/20 > 0 && e.getX () / 20 <= map.rows () && e.getY () / 20 <= map.col ())
-		g = map.add (g, getCharTile (), e.getX () / 20, e.getY () / 20);
+		g = map.add (g, getCharTile (), e.getX () / 20, e.getY () / 20, true);
 
 	    repaint ();
 
@@ -152,7 +160,16 @@ public class MapBoard extends JFrame
 
 	public void mousePressed (MouseEvent e)
 	{
-	    add (e);
+	    if (inSearch)
+	    {
+		inSearch = false;
+		map = tempMap;
+		g.dispose();
+		//g = temp.create();
+		repaint();
+	    }
+	    else
+		add (e);
 	}
 
 	public void mouseClicked (MouseEvent e)

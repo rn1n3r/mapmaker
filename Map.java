@@ -11,7 +11,7 @@ public class Map
 {
     private char[] [] map;
     private int rows, col;
-    private BufferedImage fire, flower = null;
+    private BufferedImage fire, flower, border = null;
 
 
     public Map (int r, int c)
@@ -20,6 +20,7 @@ public class Map
 	{
 	    fire = ImageIO.read (new File ("fire.png"));
 	    flower = ImageIO.read (new File ("water.png"));
+	    border = ImageIO.read (new File("border.png"));
 	}
 	catch (IOException e)
 	{
@@ -28,7 +29,7 @@ public class Map
 	rows = r;
 	col = c;
 
-	map = new char [rows] [col];
+	map = new char [rows+1] [col+1];
 
     }
 
@@ -45,9 +46,12 @@ public class Map
     }
 
 
-    public Graphics add (Graphics g, char tile, int x, int y)
+    public Graphics add (Graphics g, char tile, int x, int y, boolean mapAdd)
     {
-	map [x - 1] [y - 1] = tile;
+	if (mapAdd)
+	    map[x-1][y-1] = tile;
+	else
+	    map [x] [y] = tile;
 	BufferedImage selected = null;
 	if ((int)tile == 0)
 	{
@@ -59,6 +63,8 @@ public class Map
 		selected = fire;
 	    else if (tile == 'f')
 		selected = flower;
+	    else
+		selected = border;
 	    g.drawImage (selected, 20 * x - 20, 20 * y - 20, 20, 20, null);
 	}
 
@@ -105,14 +111,14 @@ public class Map
 	BufferedReader filein = new BufferedReader (new InputStreamReader (in));
 	try
 	{
-	    for (int x = 0 ; x < rows ; x++)
+	    for (int x = 1 ; x <= rows ; x++)
 	    {
-		for (int y = 0 ; y < col ; y++)
+		for (int y = 1 ; y <= col ; y++)
 		{
 		    
-		    map [x] [y] = (char) filein.read ();
+		    map [x-1] [y-1] = (char) filein.read ();
 	      
-		    g = add (g, map [x] [y], x + 1, y + 1);
+		    g = add (g, map [x-1] [y-1], x, y, true );
 		}
 	    }
 	}
@@ -123,5 +129,22 @@ public class Map
 
 	return g;
 
+    }
+    
+    public int search (char tile, Graphics g)
+    {
+	int counter = 0;
+	for (int x = 1; x <= rows; x++)
+	{
+	    for (int y = 1; y <= col; y++)
+	    {
+		if (map[x-1][y-1]==tile)
+		{
+		    counter++;
+		    add(g, 'b', x,y, true);
+		}
+	    }
+	}
+	return counter;
     }
 }
