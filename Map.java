@@ -20,7 +20,7 @@ public class Map
 	{
 	    fire = ImageIO.read (new File ("fire.png"));
 	    flower = ImageIO.read (new File ("water.png"));
-	    border = ImageIO.read (new File("border.png"));
+	    border = ImageIO.read (new File ("border.png"));
 	}
 	catch (IOException e)
 	{
@@ -29,7 +29,7 @@ public class Map
 	rows = r;
 	col = c;
 
-	map = new char [rows+1] [col+1];
+	map = new char [rows + 1] [col + 1];
 
     }
 
@@ -49,13 +49,13 @@ public class Map
     public Graphics add (Graphics g, char tile, int x, int y, boolean mapAdd)
     {
 	if (mapAdd)
-	    map[x-1][y-1] = tile;
+	    map [x - 1] [y - 1] = tile;
 	else
 	    map [x] [y] = tile;
 	BufferedImage selected = null;
-	if ((int)tile == 0)
+	if ((int) tile == 0)
 	{
-	    g.drawRect(20 * x - 20, 20 * y - 20, 20, 20);
+	    g.drawRect (20 * x - 20, 20 * y - 20, 20, 20);
 	}
 	else
 	{
@@ -82,7 +82,7 @@ public class Map
 	    {
 		for (int y = 0 ; y < col ; y++)
 		{
-		    
+
 		    out.write (map [x] [y]);
 		}
 	    }
@@ -115,10 +115,10 @@ public class Map
 	    {
 		for (int y = 1 ; y <= col ; y++)
 		{
-		    
-		    map [x-1] [y-1] = (char) filein.read ();
-	      
-		    g = add (g, map [x-1] [y-1], x, y, true );
+
+		    map [x - 1] [y - 1] = (char) filein.read ();
+
+		    g = add (g, map [x - 1] [y - 1], x, y, true);
 		}
 	    }
 	}
@@ -130,21 +130,38 @@ public class Map
 	return g;
 
     }
-    
-    public int search (char tile, Graphics g)
+
+
+    public Graphics load (char[] [] temp, Graphics g)
     {
-	int counter = 0;
-	for (int x = 1; x <= rows; x++)
+	for (int x = 1 ; x <= rows ; x++)
 	{
-	    for (int y = 1; y <= col; y++)
+	    for (int y = 1 ; y <= col ; y++)
 	    {
-		if (map[x-1][y-1]==tile)
+
+		map [x - 1] [y - 1] = temp [x - 1] [y - 1];
+
+		g = add (g, map [x - 1] [y - 1], x, y, true);
+	    }
+	}
+	return g;
+    }
+
+
+    public char[] [] search (char tile, Graphics g)
+    {
+	char[] [] temp = map;
+	for (int x = 1 ; x <= rows ; x++)
+	{
+	    for (int y = 1 ; y <= col ; y++)
+	    {
+		if (map [x - 1] [y - 1] == tile)
 		{
-		    counter++;
-		    add(g, 'b', x,y, true);
+
+		    add (g, 'b', x, y, true);
 		}
 	    }
 	}
-	return counter;
+	return temp;
     }
 }

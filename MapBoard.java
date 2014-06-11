@@ -11,9 +11,10 @@ import java.awt.image.BufferedImage;
 public class MapBoard extends JFrame
 {
     //Initialize global variables
-    private Map map, tempMap;
-    private BufferedImage bi;
-    private Graphics g, temp;
+    private Map map;
+    private char [] [] tempMap;
+    private BufferedImage bi, temp;
+    private Graphics g;
     private JPanel panel, menu;
     private JButton search = new JButton("Find flower");
     private JComboBox tileSelect;
@@ -120,9 +121,8 @@ public class MapBoard extends JFrame
 	    }
 	    else
 	    {
-		tempMap = map;
-		temp = g.create();
-		map.search('f', g);
+		
+		tempMap = map.search('f', g);
 		repaint();
 		inSearch =true;
 	    }
@@ -162,10 +162,10 @@ public class MapBoard extends JFrame
 	{
 	    if (inSearch)
 	    {
-		inSearch = false;
-		map = tempMap;
-		g.dispose();
-		//g = temp.create();
+		
+		g = map.load(tempMap, g);
+		
+		
 		repaint();
 	    }
 	    else
